@@ -1,14 +1,14 @@
 const ethUtil = require('ethereumjs-util')
 const ethSignUtil = require('eth-sig-util')
 const express = require('express')
-const app = express()
-const port = 80
+const index = express()
 const bodyParser = require('body-parser')
 const jsonParser = bodyParser.json()
+let port = process.env.HTTP_PORT
 
-app.use(bodyParser.json({ type: 'application/*+json' }))
+index.use(bodyParser.json({ type: 'application/*+json' }))
 
-app.post('/ecrecover',jsonParser,
+index.post('/ecrecover',jsonParser,
  (req, res) => {
    const msgBufferHex = ethUtil.bufferToHex(Buffer.from(req.body.nonce, 'utf8'));
    const address = ethSignUtil.recoverPersonalSignature({
@@ -19,4 +19,7 @@ app.post('/ecrecover',jsonParser,
  }
 )
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+if (!port){
+    port=80
+}
+index.listen(port, () => console.log(`Example app listening on port ${port}!`))
